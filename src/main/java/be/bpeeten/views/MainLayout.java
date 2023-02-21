@@ -4,10 +4,10 @@ import be.bpeeten.components.appnav.AppNav;
 import be.bpeeten.components.appnav.AppNavItem;
 import be.bpeeten.data.entity.User;
 import be.bpeeten.security.AuthenticatedUser;
-import be.bpeeten.views.overons.OverOnsView;
-import be.bpeeten.views.voegwerknemertoe.VoegwerknemertoeView;
-import be.bpeeten.views.werknemerdetail.WerknemerDetailView;
-import be.bpeeten.views.werknemers.WerknemersView;
+import be.bpeeten.views.overons.AboutView;
+import be.bpeeten.views.voegwerknemertoe.AddEmployeeView;
+import be.bpeeten.views.werknemerdetail.EmployeeDetailView;
+import be.bpeeten.views.werknemers.EmployeeView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -72,20 +72,20 @@ public class MainLayout extends AppLayout {
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
         AppNav nav = new AppNav();
 
-        if (accessChecker.hasAccess(WerknemersView.class)) {
-            nav.addItem(new AppNavItem("Werknemers", WerknemersView.class, "la la-users"));
+        if (accessChecker.hasAccess(EmployeeView.class)) {
+            nav.addItem(new AppNavItem("Werknemers", EmployeeView.class, "la la-users"));
 
         }
-        if (accessChecker.hasAccess(WerknemerDetailView.class)) {
-            nav.addItem(new AppNavItem("Werknemer Detail", WerknemerDetailView.class, "la la-user"));
+        if (accessChecker.hasAccess(EmployeeDetailView.class)) {
+            nav.addItem(new AppNavItem("Werknemer Detail", EmployeeDetailView.class, "la la-user"));
 
         }
-        if (accessChecker.hasAccess(VoegwerknemertoeView.class)) {
-            nav.addItem(new AppNavItem("Voeg werknemer toe", VoegwerknemertoeView.class, "la la-user-plus"));
+        if (accessChecker.hasAccess(AddEmployeeView.class)) {
+            nav.addItem(new AppNavItem("Voeg werknemer toe", AddEmployeeView.class, "la la-user-plus"));
 
         }
-        if (accessChecker.hasAccess(OverOnsView.class)) {
-            nav.addItem(new AppNavItem("Over Ons", OverOnsView.class, "la la-file"));
+        if (accessChecker.hasAccess(AboutView.class)) {
+            nav.addItem(new AppNavItem("Over Ons", AboutView.class, "la la-file"));
 
         }
 

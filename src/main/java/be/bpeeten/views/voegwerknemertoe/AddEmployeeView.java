@@ -1,6 +1,6 @@
 package be.bpeeten.views.voegwerknemertoe;
 
-import be.bpeeten.data.entity.SamplePerson;
+import be.bpeeten.data.entity.Person;
 import be.bpeeten.data.service.SamplePersonService;
 import be.bpeeten.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 @Route(value = "add-employee", layout = MainLayout.class)
 @RolesAllowed("ADMIN")
 @Uses(Icon.class)
-public class VoegwerknemertoeView extends Div {
+public class AddEmployeeView extends Div {
 
     private TextField firstName = new TextField("First name");
     private TextField lastName = new TextField("Last name");
@@ -39,9 +39,9 @@ public class VoegwerknemertoeView extends Div {
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
 
-    private Binder<SamplePerson> binder = new Binder<>(SamplePerson.class);
+    private Binder<Person> binder = new Binder<>(Person.class);
 
-    public VoegwerknemertoeView(SamplePersonService personService) {
+    public AddEmployeeView(SamplePersonService personService) {
         addClassName("voegwerknemertoe-view");
 
         add(createTitle());
@@ -60,7 +60,7 @@ public class VoegwerknemertoeView extends Div {
     }
 
     private void clearForm() {
-        binder.setBean(new SamplePerson());
+        binder.setBean(new Person());
     }
 
     private Component createTitle() {

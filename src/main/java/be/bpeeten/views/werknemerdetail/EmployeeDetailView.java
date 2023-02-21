@@ -1,4 +1,4 @@
-package be.bpeeten.views.overons;
+package be.bpeeten.views.werknemerdetail;
 
 import be.bpeeten.views.MainLayout;
 import com.vaadin.flow.component.html.H2;
@@ -7,15 +7,15 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
+import javax.annotation.security.RolesAllowed;
 
-@PageTitle("Over Ons")
-@Route(value = "about", layout = MainLayout.class)
-@AnonymousAllowed
-public class OverOnsView extends VerticalLayout {
+@PageTitle("Werknemer Detail")
+@Route(value = "employee-detail", layout = MainLayout.class)
+@RolesAllowed("ADMIN")
+public class EmployeeDetailView extends VerticalLayout {
 
-    public OverOnsView() {
+    public EmployeeDetailView() {
         setSpacing(false);
 
         Image img = new Image("images/empty-plant.png", "placeholder plant");

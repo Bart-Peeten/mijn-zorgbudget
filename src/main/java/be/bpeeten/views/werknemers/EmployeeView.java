@@ -1,6 +1,6 @@
 package be.bpeeten.views.werknemers;
 
-import be.bpeeten.data.entity.SamplePerson;
+import be.bpeeten.data.entity.Person;
 import be.bpeeten.data.service.SamplePersonService;
 import be.bpeeten.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -42,14 +42,14 @@ import org.springframework.data.jpa.domain.Specification;
 @RouteAlias(value = "", layout = MainLayout.class)
 @RolesAllowed("ADMIN")
 @Uses(Icon.class)
-public class WerknemersView extends Div {
+public class EmployeeView extends Div {
 
-    private Grid<SamplePerson> grid;
+    private Grid<Person> grid;
 
     private Filters filters;
     private final SamplePersonService samplePersonService;
 
-    public WerknemersView(SamplePersonService SamplePersonService) {
+    public EmployeeView(SamplePersonService SamplePersonService) {
         this.samplePersonService = SamplePersonService;
         setSizeFull();
         addClassNames("werknemers-view");
@@ -86,7 +86,7 @@ public class WerknemersView extends Div {
         return mobileFilters;
     }
 
-    public static class Filters extends Div implements Specification<SamplePerson> {
+    public static class Filters extends Div implements Specification<Person> {
 
         private final TextField name = new TextField("Name");
         private final TextField phone = new TextField("Phone");
@@ -154,7 +154,7 @@ public class WerknemersView extends Div {
         }
 
         @Override
-        public Predicate toPredicate(Root<SamplePerson> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        public Predicate toPredicate(Root<Person> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
 
             if (!name.isEmpty()) {
@@ -227,7 +227,7 @@ public class WerknemersView extends Div {
     }
 
     private Component createGrid() {
-        grid = new Grid<>(SamplePerson.class, false);
+        grid = new Grid<>(Person.class, false);
         grid.addColumn("firstName").setAutoWidth(true);
         grid.addColumn("lastName").setAutoWidth(true);
         grid.addColumn("email").setAutoWidth(true);

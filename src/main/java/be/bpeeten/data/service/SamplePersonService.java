@@ -1,6 +1,6 @@
 package be.bpeeten.data.service;
 
-import be.bpeeten.data.entity.SamplePerson;
+import be.bpeeten.data.entity.Person;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,11 +16,11 @@ public class SamplePersonService {
         this.repository = repository;
     }
 
-    public Optional<SamplePerson> get(Long id) {
+    public Optional<Person> get(Long id) {
         return repository.findById(id);
     }
 
-    public SamplePerson update(SamplePerson entity) {
+    public Person update(Person entity) {
         return repository.save(entity);
     }
 
@@ -28,11 +28,11 @@ public class SamplePersonService {
         repository.deleteById(id);
     }
 
-    public Page<SamplePerson> list(Pageable pageable) {
+    public Page<Person> list(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    public Page<SamplePerson> list(Pageable pageable, Specification<SamplePerson> filter) {
+    public Page<Person> list(Pageable pageable, Specification<Person> filter) {
         return repository.findAll(filter, pageable);
     }
 
