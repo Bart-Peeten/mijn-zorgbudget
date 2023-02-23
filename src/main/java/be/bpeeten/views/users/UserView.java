@@ -40,7 +40,7 @@ public class UserView extends Div {
 
     private Grid<User> grid;
 
-    private Filters filters;
+    private final Filters filters;
     private final UserService userService;
 
     public UserView(UserService userService) {
@@ -137,7 +137,7 @@ public class UserView extends Div {
         grid.addColumn("roles").setAutoWidth(true);
 
         grid.setItems(query -> userService.list(
-                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query))).stream());
+                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)), filters).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
         grid.addItemClickListener(event -> {

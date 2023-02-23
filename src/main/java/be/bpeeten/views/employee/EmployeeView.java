@@ -93,7 +93,6 @@ public class EmployeeView extends Div {
         private final TextField phone = new TextField("Phone");
         private final DatePicker startDate = new DatePicker("Date of Birth");
         private final DatePicker endDate = new DatePicker();
-        private final CheckboxGroup<String> roles = new CheckboxGroup<>("Role");
 
         public Filters(Runnable onSearch) {
 
@@ -103,9 +102,6 @@ public class EmployeeView extends Div {
                     LumoUtility.BoxSizing.BORDER);
             name.setPlaceholder("First or last name");
 
-            roles.setItems("Worker", "Supervisor", "Manager", "External");
-            roles.addClassName("double-width");
-
             // Action buttons
             Button resetBtn = new Button("Reset");
             resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -114,7 +110,6 @@ public class EmployeeView extends Div {
                 phone.clear();
                 startDate.clear();
                 endDate.clear();
-                roles.clear();
                 onSearch.run();
             });
             Button searchBtn = new Button("Search");
@@ -129,7 +124,7 @@ public class EmployeeView extends Div {
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
 
-            add(name, phone, createDateRangeFilter(), roles, actions);
+            add(name, phone, createDateRangeFilter(), actions);
         }
 
         private Component createDateRangeFilter() {
@@ -186,14 +181,6 @@ public class EmployeeView extends Div {
                 String databaseColumn = "dateOfBirth";
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.literal(endDate.getValue()),
                         root.get(databaseColumn)));
-            }
-            if (!roles.isEmpty()) {
-                String databaseColumn = "role";
-                List<Predicate> rolePredicates = new ArrayList<>();
-                for (String role : roles.getValue()) {
-                    rolePredicates.add(criteriaBuilder.equal(criteriaBuilder.literal(role), root.get(databaseColumn)));
-                }
-                predicates.add(criteriaBuilder.or(rolePredicates.toArray(Predicate[]::new)));
             }
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }

@@ -26,6 +26,7 @@ import com.vaadin.flow.router.Route;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.Objects;
 
 @PageTitle("Voeg werknemer toe")
 @Route(value = "add-employee", layout = MainLayout.class)
@@ -38,7 +39,6 @@ public class AddEmployeeView extends Div {
     private EmailField email = new EmailField("Email address");
     private DatePicker dateOfBirth = new DatePicker("Birthday");
     private PhoneNumberField phone = new PhoneNumberField("Phone number");
-    private PasswordField password = new PasswordField("Password");
 
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
@@ -55,16 +55,21 @@ public class AddEmployeeView extends Div {
         binder.bindInstanceFields(this);
         clearForm();
 
-        cancel.addClickListener(e -> clearForm());
-        save.addClickListener(e -> {
-            Person person = binder.getBean();
-            String hashedPassword = BCrypt.hashpw(person.getPassword(), BCrypt.gensalt());
-            person.setPassword(hashedPassword);
-            person.setRole("Admin");
-            personService.update(person);
-            Notification.show(person.getClass().getSimpleName() + " details stored.");
+        cancel.addClickListener(e -> {
             clearForm();
             UI.getCurrent().navigate("employees");
+        });
+        save.addClickListener(e -> {
+            Person person = binder.getBean();
+            if (Objects.nonNull(person.getFirstName()) || Objects.nonNull(person.getLastName())) {
+                String hashedPassword = BCrypt.hashpw(person.getPassword(), BCrypt.gensalt());
+                person.setPassword(hashedPassword);
+                person.setRole("Admin");
+                personService.update(person);
+                Notification.show(person.getClass().getSimpleName() + " details stored.");
+                clearForm();
+                UI.getCurrent().navigate("employees");
+            }
         });
     }
 
@@ -79,7 +84,7 @@ public class AddEmployeeView extends Div {
     private Component createFormLayout() {
         FormLayout formLayout = new FormLayout();
         email.setErrorMessage("Please enter a valid email address");
-        formLayout.add(firstName, lastName, dateOfBirth, phone, email, password);
+        formLayout.add(firstName, lastName, dateOfBirth, phone, email);
         return formLayout;
     }
 
