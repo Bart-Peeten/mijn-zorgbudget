@@ -1,14 +1,15 @@
-package be.bpeeten.views.werknemers;
+package be.bpeeten.views.employee;
 
 import be.bpeeten.data.entity.Person;
-import be.bpeeten.data.service.SamplePersonService;
+import be.bpeeten.data.service.PersonService;
 import be.bpeeten.views.MainLayout;
+import be.bpeeten.views.addEmployee.AddEmployeeView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
-import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
@@ -16,6 +17,7 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -45,11 +47,10 @@ import org.springframework.data.jpa.domain.Specification;
 public class EmployeeView extends Div {
 
     private Grid<Person> grid;
-
     private Filters filters;
-    private final SamplePersonService samplePersonService;
+    private final PersonService samplePersonService;
 
-    public EmployeeView(SamplePersonService SamplePersonService) {
+    public EmployeeView(PersonService SamplePersonService) {
         this.samplePersonService = SamplePersonService;
         setSizeFull();
         addClassNames("werknemers-view");
@@ -92,7 +93,6 @@ public class EmployeeView extends Div {
         private final TextField phone = new TextField("Phone");
         private final DatePicker startDate = new DatePicker("Date of Birth");
         private final DatePicker endDate = new DatePicker();
-        private final MultiSelectComboBox<String> occupations = new MultiSelectComboBox<>("Occupation");
         private final CheckboxGroup<String> roles = new CheckboxGroup<>("Role");
 
         public Filters(Runnable onSearch) {
@@ -102,8 +102,6 @@ public class EmployeeView extends Div {
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
             name.setPlaceholder("First or last name");
-
-            occupations.setItems("Insurance Clerk", "Mortarman", "Beer Coil Cleaner", "Scale Attendant");
 
             roles.setItems("Worker", "Supervisor", "Manager", "External");
             roles.addClassName("double-width");
@@ -116,7 +114,6 @@ public class EmployeeView extends Div {
                 phone.clear();
                 startDate.clear();
                 endDate.clear();
-                occupations.clear();
                 roles.clear();
                 onSearch.run();
             });
@@ -124,11 +121,15 @@ public class EmployeeView extends Div {
             searchBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             searchBtn.addClickListener(e -> onSearch.run());
 
-            Div actions = new Div(resetBtn, searchBtn);
+            Button addEmployeeBtn = new Button("Add");
+            addEmployeeBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+            addEmployeeBtn.addClickListener(e -> UI.getCurrent().navigate("add-employee"));
+
+            Div actions = new Div(addEmployeeBtn, resetBtn, searchBtn);
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
 
-            add(name, phone, createDateRangeFilter(), occupations, roles, actions);
+            add(name, phone, createDateRangeFilter(), roles, actions);
         }
 
         private Component createDateRangeFilter() {
@@ -186,15 +187,6 @@ public class EmployeeView extends Div {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.literal(endDate.getValue()),
                         root.get(databaseColumn)));
             }
-            if (!occupations.isEmpty()) {
-                String databaseColumn = "occupation";
-                List<Predicate> occupationPredicates = new ArrayList<>();
-                for (String occupation : occupations.getValue()) {
-                    occupationPredicates
-                            .add(criteriaBuilder.equal(criteriaBuilder.literal(occupation), root.get(databaseColumn)));
-                }
-                predicates.add(criteriaBuilder.or(occupationPredicates.toArray(Predicate[]::new)));
-            }
             if (!roles.isEmpty()) {
                 String databaseColumn = "role";
                 List<Predicate> rolePredicates = new ArrayList<>();
@@ -233,14 +225,17 @@ public class EmployeeView extends Div {
         grid.addColumn("email").setAutoWidth(true);
         grid.addColumn("phone").setAutoWidth(true);
         grid.addColumn("dateOfBirth").setAutoWidth(true);
-        grid.addColumn("occupation").setAutoWidth(true);
-        grid.addColumn("role").setAutoWidth(true);
 
         grid.setItems(query -> samplePersonService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
                 filters).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
+        grid.addItemClickListener(event -> {
+            String item = event.getItem().getFirstName();
+            Notification.show("Navigating to details of: " + item);
+            UI.getCurrent().navigate("employee-detail");
+        });
 
         return grid;
     }

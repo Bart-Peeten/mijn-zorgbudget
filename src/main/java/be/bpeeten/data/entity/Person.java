@@ -14,6 +14,7 @@ public class Person extends AbstractEntity {
     private String phone;
     private LocalDate dateOfBirth;
     private Double workedHours;
+    private String password;
     private String role;
 
     public String getFirstName() {
@@ -59,5 +60,13 @@ public class Person extends AbstractEntity {
 
     public void setWorkedHours(Double workedHours) {
         this.workedHours = workedHours;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

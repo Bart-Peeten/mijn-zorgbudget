@@ -1,9 +1,10 @@
-package be.bpeeten.views.voegwerknemertoe;
+package be.bpeeten.views.addEmployee;
 
 import be.bpeeten.data.entity.Person;
-import be.bpeeten.data.service.SamplePersonService;
+import be.bpeeten.data.service.PersonService;
 import be.bpeeten.views.MainLayout;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -17,10 +18,13 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.mindrot.jbcrypt.BCrypt;
+
 import javax.annotation.security.RolesAllowed;
 
 @PageTitle("Voeg werknemer toe")
@@ -34,14 +38,14 @@ public class AddEmployeeView extends Div {
     private EmailField email = new EmailField("Email address");
     private DatePicker dateOfBirth = new DatePicker("Birthday");
     private PhoneNumberField phone = new PhoneNumberField("Phone number");
-    private TextField occupation = new TextField("Occupation");
+    private PasswordField password = new PasswordField("Password");
 
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
 
     private Binder<Person> binder = new Binder<>(Person.class);
 
-    public AddEmployeeView(SamplePersonService personService) {
+    public AddEmployeeView(PersonService personService) {
         addClassName("voegwerknemertoe-view");
 
         add(createTitle());
@@ -53,9 +57,14 @@ public class AddEmployeeView extends Div {
 
         cancel.addClickListener(e -> clearForm());
         save.addClickListener(e -> {
-            personService.update(binder.getBean());
-            Notification.show(binder.getBean().getClass().getSimpleName() + " details stored.");
+            Person person = binder.getBean();
+            String hashedPassword = BCrypt.hashpw(person.getPassword(), BCrypt.gensalt());
+            person.setPassword(hashedPassword);
+            person.setRole("Admin");
+            personService.update(person);
+            Notification.show(person.getClass().getSimpleName() + " details stored.");
             clearForm();
+            UI.getCurrent().navigate("employees");
         });
     }
 
@@ -64,13 +73,13 @@ public class AddEmployeeView extends Div {
     }
 
     private Component createTitle() {
-        return new H3("Personal information");
+        return new H3("Werkgever informatie");
     }
 
     private Component createFormLayout() {
         FormLayout formLayout = new FormLayout();
         email.setErrorMessage("Please enter a valid email address");
-        formLayout.add(firstName, lastName, dateOfBirth, phone, email, occupation);
+        formLayout.add(firstName, lastName, dateOfBirth, phone, email, password);
         return formLayout;
     }
 
@@ -92,7 +101,7 @@ public class AddEmployeeView extends Div {
             countryCode.setWidth("120px");
             countryCode.setPlaceholder("Country");
             countryCode.setAllowedCharPattern("[\\+\\d]");
-            countryCode.setItems("+354", "+91", "+62", "+98", "+964", "+353", "+44", "+972", "+39", "+225");
+            countryCode.setItems("+32", "+31");
             countryCode.addCustomValueSetListener(e -> countryCode.setValue(e.getDetail()));
             number.setAllowedCharPattern("\\d");
             HorizontalLayout layout = new HorizontalLayout(countryCode, number);

@@ -4,10 +4,10 @@ import be.bpeeten.components.appnav.AppNav;
 import be.bpeeten.components.appnav.AppNavItem;
 import be.bpeeten.data.entity.User;
 import be.bpeeten.security.AuthenticatedUser;
-import be.bpeeten.views.overons.AboutView;
-import be.bpeeten.views.voegwerknemertoe.AddEmployeeView;
-import be.bpeeten.views.werknemerdetail.EmployeeDetailView;
-import be.bpeeten.views.werknemers.EmployeeView;
+import be.bpeeten.views.about.AboutView;
+import be.bpeeten.views.employee.EmployeeView;
+import be.bpeeten.views.employeeDetails.EmployeeDetailView;
+import be.bpeeten.views.users.UserView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -26,6 +26,7 @@ import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import java.io.ByteArrayInputStream;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -74,19 +75,15 @@ public class MainLayout extends AppLayout {
 
         if (accessChecker.hasAccess(EmployeeView.class)) {
             nav.addItem(new AppNavItem("Werknemers", EmployeeView.class, "la la-users"));
-
         }
         if (accessChecker.hasAccess(EmployeeDetailView.class)) {
             nav.addItem(new AppNavItem("Werknemer Detail", EmployeeDetailView.class, "la la-user"));
-
         }
-        if (accessChecker.hasAccess(AddEmployeeView.class)) {
-            nav.addItem(new AppNavItem("Voeg werknemer toe", AddEmployeeView.class, "la la-user-plus"));
-
+        if (accessChecker.hasAccess(UserView.class)) {
+            nav.addItem(new AppNavItem("Gebruikers", UserView.class, "la la-user-plus"));
         }
         if (accessChecker.hasAccess(AboutView.class)) {
             nav.addItem(new AppNavItem("Over Ons", AboutView.class, "la la-file"));
-
         }
 
         return nav;
@@ -100,8 +97,8 @@ public class MainLayout extends AppLayout {
             User user = maybeUser.get();
 
             Avatar avatar = new Avatar(user.getName());
-            StreamResource resource = new StreamResource("profile-pic",
-                    () -> new ByteArrayInputStream(user.getProfilePicture()));
+            StreamResource resource = Objects.nonNull(user.getProfilePicture()) ? new StreamResource("profile-pic",
+                    () -> new ByteArrayInputStream(user.getProfilePicture())) : null;
             avatar.setImageResource(resource);
             avatar.setThemeName("xsmall");
             avatar.getElement().setAttribute("tabindex", "-1");

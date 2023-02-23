@@ -8,11 +8,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SamplePersonService {
+public class PersonService {
 
-    private final SamplePersonRepository repository;
+    private final PersonRepository repository;
 
-    public SamplePersonService(SamplePersonRepository repository) {
+    public PersonService(PersonRepository repository) {
         this.repository = repository;
     }
 
