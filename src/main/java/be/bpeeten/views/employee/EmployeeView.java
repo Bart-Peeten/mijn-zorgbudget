@@ -3,13 +3,12 @@ package be.bpeeten.views.employee;
 import be.bpeeten.data.entity.Person;
 import be.bpeeten.data.service.PersonService;
 import be.bpeeten.views.MainLayout;
-import be.bpeeten.views.addEmployee.AddEmployeeView;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
@@ -28,16 +27,13 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.security.RolesAllowed;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.annotation.security.RolesAllowed;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @PageTitle("Werknemers")
 @Route(value = "employees", layout = MainLayout.class)
@@ -48,10 +44,10 @@ public class EmployeeView extends Div {
 
     private Grid<Person> grid;
     private Filters filters;
-    private final PersonService samplePersonService;
+    private final PersonService PersonService;
 
-    public EmployeeView(PersonService SamplePersonService) {
-        this.samplePersonService = SamplePersonService;
+    public EmployeeView(PersonService personService) {
+        this.PersonService = personService;
         setSizeFull();
         addClassNames("werknemers-view");
 
@@ -213,7 +209,7 @@ public class EmployeeView extends Div {
         grid.addColumn("phone").setAutoWidth(true);
         grid.addColumn("dateOfBirth").setAutoWidth(true);
 
-        grid.setItems(query -> samplePersonService.list(
+        grid.setItems(query -> PersonService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
                 filters).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -221,6 +217,7 @@ public class EmployeeView extends Div {
         grid.addItemClickListener(event -> {
             String item = event.getItem().getFirstName();
             Notification.show("Navigating to details of: " + item);
+            ComponentUtil.setData(UI.getCurrent(), Person.class, event.getItem());
             UI.getCurrent().navigate("employee-detail");
         });
 

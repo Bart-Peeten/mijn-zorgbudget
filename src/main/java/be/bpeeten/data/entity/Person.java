@@ -1,8 +1,10 @@
 package be.bpeeten.data.entity;
 
-import java.time.LocalDate;
 import javax.persistence.Entity;
 import javax.validation.constraints.Email;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 public class Person extends AbstractEntity {
@@ -16,6 +18,24 @@ public class Person extends AbstractEntity {
     private Double workedHours;
     private String password;
     private String role;
+    private LocalDateTime startDateTime;
+    private LocalTime endTimeValue;
+
+    public LocalTime getEndTimeValue() {
+        return endTimeValue;
+    }
+
+    public void setEndTimeValue(LocalTime endTimeValue) {
+        this.endTimeValue = endTimeValue;
+    }
+
+    public LocalDateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
 
     public String getFirstName() {
         return firstName;

@@ -4,6 +4,7 @@ import be.bpeeten.data.entity.Person;
 import be.bpeeten.data.service.PersonService;
 import be.bpeeten.views.MainLayout;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
