@@ -51,7 +51,7 @@ public class EmployeeView extends Div {
         setSizeFull();
         addClassNames("werknemers-view");
 
-        filters = new Filters(() -> refreshGrid());
+        filters = new Filters(this::refreshGrid);
         VerticalLayout layout = new VerticalLayout(createMobileFilters(), filters, createGrid());
         layout.setSizeFull();
         layout.setPadding(false);

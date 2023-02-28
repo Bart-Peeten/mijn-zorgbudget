@@ -1,7 +1,7 @@
 package be.bpeeten.security;
 
 import be.bpeeten.data.entity.User;
-import be.bpeeten.data.service.UserRepository;
+import be.bpeeten.data.repositories.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;

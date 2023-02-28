@@ -1,6 +1,6 @@
 package be.bpeeten;
 
-import be.bpeeten.data.service.PersonRepository;
+import be.bpeeten.data.repositories.PersonRepository;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.theme.Theme;

@@ -2,6 +2,8 @@ package be.bpeeten.data.service;
 
 import be.bpeeten.data.entity.User;
 import java.util.Optional;
+
+import be.bpeeten.data.repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

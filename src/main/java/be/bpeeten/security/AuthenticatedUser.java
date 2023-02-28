@@ -1,7 +1,7 @@
 package be.bpeeten.security;
 
 import be.bpeeten.data.entity.User;
-import be.bpeeten.data.service.UserRepository;
+import be.bpeeten.data.repositories.UserRepository;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,4 +1,4 @@
-package be.bpeeten.data.service;
+package be.bpeeten.data.repositories;
 
 import be.bpeeten.data.entity.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
