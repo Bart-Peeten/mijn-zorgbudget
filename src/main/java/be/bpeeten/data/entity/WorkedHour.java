@@ -1,42 +1,44 @@
 package be.bpeeten.data.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import java.sql.Time;
-import java.util.Date;
+import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
 public class WorkedHour extends AbstractEntity {
 
-    private Date workDay;
-    private Time startTime;
-    private Time endTime;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
+    private LocalDate workDay;
+    private LocalTime startTime;
+    private LocalTime endTime;
     @ManyToMany
     private List<Person> persons;
 
-    public Date getWorkDay() {
+    public LocalDate getWorkDay() {
         return workDay;
     }
 
-    public void setWorkDay(Date workDay) {
+    public void setWorkDay(LocalDate workDay) {
         this.workDay = workDay;
     }
 
-    public Time getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Time startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public Time getEndTime() {
+    public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Time endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 

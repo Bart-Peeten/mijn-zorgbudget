@@ -42,6 +42,8 @@ import java.util.List;
 @Uses(Icon.class)
 public class EmployeeView extends Div {
 
+    private static final String VISIBLE = "visible";
+
     private Grid<Person> grid;
     private Filters filters;
     private final PersonService PersonService;
@@ -72,11 +74,11 @@ public class EmployeeView extends Div {
         mobileFilters.add(mobileIcon, filtersHeading);
         mobileFilters.setFlexGrow(1, filtersHeading);
         mobileFilters.addClickListener(e -> {
-            if (filters.getClassNames().contains("visible")) {
-                filters.removeClassName("visible");
+            if (filters.getClassNames().contains(VISIBLE)) {
+                filters.removeClassName(VISIBLE);
                 mobileIcon.getElement().setAttribute("icon", "lumo:plus");
             } else {
-                filters.addClassName("visible");
+                filters.addClassName(VISIBLE);
                 mobileIcon.getElement().setAttribute("icon", "lumo:minus");
             }
         });

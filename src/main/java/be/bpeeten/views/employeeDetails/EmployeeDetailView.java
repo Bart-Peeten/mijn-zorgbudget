@@ -1,5 +1,6 @@
 package be.bpeeten.views.employeeDetails;
 
+import be.bpeeten.data.entity.Person;
 import be.bpeeten.data.entity.WorkedHour;
 import be.bpeeten.data.service.WorkHourService;
 import be.bpeeten.views.MainLayout;
@@ -10,7 +11,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -34,7 +34,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -46,19 +47,26 @@ public class EmployeeDetailView extends Div {
 
     private Grid<WorkedHour> grid;
     private Filters filters;
-    private LocalDateTime selectedDateTime;
+    private LocalDate selectedDate;
+    private Person employee;
     private final transient WorkHourService workHourService;
+    private LocalTime selectedStartTime;
+    private LocalTime selectedEndTime;
+    public static final String VISIBLE = "visible";
 
     public EmployeeDetailView(WorkHourService workHourService) {
         this.workHourService = workHourService;
         setSizeFull();
         addClassNames("werknemers-view");
 
+        employee = ComponentUtil.getData(UI.getCurrent(), Person.class);
+
         filters = new Filters(this::refreshGrid);
         VerticalLayout layout = new VerticalLayout(createMobileFilters(), filters, createHeaderWorkBar(), createGrid());
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
+
         add(layout);
     }
 
@@ -80,21 +88,31 @@ public class EmployeeDetailView extends Div {
     }
 
     private Dialog getDataPicker() {
-        DateTimePicker dateTimePicker = new DateTimePicker();
-        TimePicker timePicker = new TimePicker("selecteer een eind uur");
+        DatePicker datePicker = new DatePicker();
+        TimePicker startTimePicker = new TimePicker("selecteer een start uur");
+        TimePicker endTimePicker = new TimePicker("selecteer een eind uur");
         Button saveButton = new Button("Save");
         Dialog dialog = new Dialog();
-        dateTimePicker.setLabel("Selecteer een dag en begin uur");
-        dateTimePicker.setLocale(Locale.GERMANY);
+        datePicker.setLabel("Selecteer een dag");
+        datePicker.setLocale(Locale.GERMANY);
 
         saveButton.addClickListener(event -> {
-            selectedDateTime = dateTimePicker.getValue();
-            // Do something with the selectedDateTime value
+            WorkedHour workedHour = new WorkedHour();
+            workedHour.setWorkDay(datePicker.getValue());
+            workedHour.setStartTime(startTimePicker.getValue());
+            workedHour.setEndTime(endTimePicker.getValue());
+            workedHour.setPersons(List.of(this.employee));
+
+            workHourService.save(workedHour);
+
+            List<WorkedHour> hours = workHourService.getWorkHoursFor(employee);
+            refreshGrid();
+
             dialog.close();
         });
 
         VerticalLayout dateTimePickerLayout = new VerticalLayout();
-        dateTimePickerLayout.add(dateTimePicker, timePicker, saveButton);
+        dateTimePickerLayout.add(datePicker, startTimePicker, endTimePicker, saveButton);
 
         dialog.add(dateTimePickerLayout);
 
@@ -114,23 +132,15 @@ public class EmployeeDetailView extends Div {
         mobileFilters.add(mobileIcon, filtersHeading);
         mobileFilters.setFlexGrow(1, filtersHeading);
         mobileFilters.addClickListener(e -> {
-            if (filters.getClassNames().contains("visible")) {
-                filters.removeClassName("visible");
+            if (filters.getClassNames().contains(VISIBLE)) {
+                filters.removeClassName(VISIBLE);
                 mobileIcon.getElement().setAttribute("icon", "lumo:plus");
             } else {
-                filters.addClassName("visible");
+                filters.addClassName(VISIBLE);
                 mobileIcon.getElement().setAttribute("icon", "lumo:minus");
             }
         });
         return mobileFilters;
-    }
-
-    public LocalDateTime getSelectedDateTime() {
-        return selectedDateTime;
-    }
-
-    public void setSelectedDateTime(LocalDateTime selectedDateTime) {
-        this.selectedDateTime = selectedDateTime;
     }
 
     public static class Filters extends Div implements Specification<WorkedHour> {
@@ -217,7 +227,7 @@ public class EmployeeDetailView extends Div {
 
         grid.setItems(query -> workHourService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
-                filters).stream());
+                employee).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
         grid.addItemClickListener(event -> {
